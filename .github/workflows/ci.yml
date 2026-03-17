@@ -42,5 +42,5 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/emiiir95/tp_junit:latest
+            ghcr.io/emiiir95/tp_junit:${{ github.sha }}
