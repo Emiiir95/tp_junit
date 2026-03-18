@@ -6,7 +6,7 @@ metadata:
   labels:
     app: boutique
 spec:
-  replicas: 3 # 3 Pods en permanence
+  replicas: 4 # 4 Pods en permanence
   selector:
     matchLabels:
       app: boutique
@@ -16,19 +16,33 @@ spec:
         app: boutique
     spec:
       containers:
-        - name: boutique
-          image: ghcr.io/emiiir95/tp_junit:latest # ← à adapter
-          ports:
-            - containerPort: 8080
-          envFrom:
-            - configMapRef:
-                name: boutique-config # inject. toutes les vars du ConfigMap
-            - secretRef:
-                name: boutique-secret # inject. toutes les vars du Secret
-          resources:
-            requests:
-              cpu: "100m"  # 0.1 CPU garanti
-              memory: "128Mi"  # 128 Mo garanti
-            limits:
-              cpu: "500m"  # max 0.5 CPU
-              memory: "256Mi"  # max 256 Mo
+      - name: boutique
+        image: ghcr.io/emiiir95/tp_junit:latest # ← à adapter
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: boutique-config # inject. toutes les vars du ConfigMap
+        - secretRef:
+            name: boutique-secret # inject. toutes les vars du Secret
+        livenessProbe:
+          # redémarre si le conteneur est bloqué
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          # n'envoie du trafic que si prêt
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            cpu: "100m" # 0.1 CPU garanti
+            memory: "128Mi" # 128 Mo garanti
+          limits:
+            cpu: "500m" # max 0.5 CPU
+            memory: "256Mi" # max 256 Mo
