@@ -60,5 +60,6 @@ jobs:
         env:
           KUBECONFIG_DATA: ${{ secrets.KUBECONFIG }}
         run: |
-          echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig
-          kubectl apply -f k8s/ --kubeconfig=./kubeconfig
+          mkdir -p ~/.kube
+          echo "$KUBECONFIG_DATA" > ~/.kube/config
+          kubectl apply -f k8s/
